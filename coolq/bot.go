@@ -434,6 +434,7 @@ func (bot *CQBot) SendGuildChannelMessage(guildID, channelID uint64, m *message.
 		return ""
 	}
 	// todo: insert db
+	bot.InsertGuildChannelMessage(ret)
 	return fmt.Sprintf("%v-%v", ret.Id, ret.InternalId)
 }
 
@@ -577,7 +578,7 @@ func (bot *CQBot) InsertGuildChannelMessage(m *message.GuildChannelMessage) stri
 		ChannelID: m.ChannelId,
 		Content:   ToMessageContent(m.Elements),
 	}
-	//loghook.SaveGuildChannelMsg(m.GuildId, m.ChannelId, id)
+	loghook.SaveGuildChannelMsg(m.GuildId, m.ChannelId, id)
 	if err := db.InsertGuildChannelMessage(msg); err != nil {
 		log.Warnf("记录聊天数据时出现错误: %v", err)
 		return ""
