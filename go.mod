@@ -7,12 +7,12 @@ require (
 	github.com/GoAdminGroup/go-admin v1.2.23
 	github.com/GoAdminGroup/themes v0.0.43
 	github.com/Microsoft/go-winio v0.5.1
-	github.com/Mrs4s/MiraiGo v0.0.0-20211208080234-25c67a3ee1c1
+	github.com/Mrs4s/MiraiGo v0.0.0-20211228140953-ab72f3dc28da
+	github.com/RomiChan/websocket v1.4.3-0.20220112132122-0fb50fcee646
 	github.com/dustin/go-humanize v1.0.0
 	github.com/fumiama/go-hide-param v0.1.4
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/gocq/qrcode v0.0.0-20211114040510-366b953fcd98
-	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/kataras/iris/v12 v12.1.8
@@ -115,7 +115,7 @@ require (
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20211110154304-99a53858aa08 // indirect
+	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect

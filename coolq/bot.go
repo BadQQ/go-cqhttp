@@ -13,15 +13,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Mrs4s/go-cqhttp/db"
-
 	"github.com/Mrs4s/MiraiGo/binary"
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/Mrs4s/MiraiGo/message"
 	"github.com/Mrs4s/MiraiGo/utils"
 	"github.com/pkg/errors"
+	"github.com/segmentio/asm/base64"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/Mrs4s/go-cqhttp/db"
 	"github.com/Mrs4s/go-cqhttp/global"
 	"github.com/Mrs4s/go-cqhttp/internal/base"
 )
@@ -35,6 +35,7 @@ type CQBot struct {
 
 	friendReqCache   sync.Map
 	tempSessionCache sync.Map
+	nextTokenCache   *utils.Cache
 }
 
 // Event 事件
@@ -68,7 +69,8 @@ func (e *Event) JSONString() string {
 // NewQQBot 初始化一个QQBot实例
 func NewQQBot(cli *client.QQClient) *CQBot {
 	bot := &CQBot{
-		Client: cli,
+		Client:         cli,
+		nextTokenCache: utils.NewCache(time.Second * 10),
 	}
 	bot.Client.OnPrivateMessage(bot.privateMessageEvent)
 	bot.Client.OnGroupMessage(bot.groupMessageEvent)
@@ -79,6 +81,7 @@ func NewQQBot(cli *client.QQClient) *CQBot {
 	bot.Client.OnTempMessage(bot.tempMessageEvent)
 	bot.Client.GuildService.OnGuildChannelMessage(bot.guildChannelMessageEvent)
 	bot.Client.GuildService.OnGuildMessageReactionsUpdated(bot.guildMessageReactionsUpdatedEvent)
+	bot.Client.GuildService.OnGuildMessageRecalled(bot.guildChannelMessageRecalledEvent)
 	bot.Client.GuildService.OnGuildChannelUpdated(bot.guildChannelUpdatedEvent)
 	bot.Client.GuildService.OnGuildChannelCreated(bot.guildChannelCreatedEvent)
 	bot.Client.GuildService.OnGuildChannelDestroyed(bot.guildChannelDestroyedEvent)
@@ -409,7 +412,11 @@ func (bot *CQBot) SendGuildChannelMessage(guildID, channelID uint64, m *message.
 			}
 			e = n
 
-		case *LocalVoiceElement, *PokeElement, *message.MusicShareElement:
+		case *message.MusicShareElement:
+			bot.Client.SendGuildMusicShare(guildID, channelID, i)
+			return "-1" // todo: fix this
+
+		case *LocalVoiceElement, *PokeElement:
 			log.Warnf("警告: 频道暂不支持发送 %v 消息", i.Type().String())
 			continue
 		}
@@ -554,9 +561,32 @@ func (bot *CQBot) InsertTempMessage(target int64, m *message.TempMessage) int32 
 }
 */
 
+// InsertGuildChannelMessage 频道消息入数据库
+func (bot *CQBot) InsertGuildChannelMessage(m *message.GuildChannelMessage) string {
+	id := encodeGuildMessageID(m.GuildId, m.ChannelId, m.Id, MessageSourceGuildChannel)
+	msg := &db.StoredGuildChannelMessage{
+		ID: id,
+		Attribute: &db.StoredGuildMessageAttribute{
+			MessageSeq:   m.Id,
+			InternalID:   m.InternalId,
+			SenderTinyID: m.Sender.TinyId,
+			SenderName:   m.Sender.Nickname,
+			Timestamp:    m.Time,
+		},
+		GuildID:   m.GuildId,
+		ChannelID: m.ChannelId,
+		Content:   ToMessageContent(m.Elements),
+	}
+	//loghook.SaveGuildChannelMsg(m.GuildId, m.ChannelId, id)
+	if err := db.InsertGuildChannelMessage(msg); err != nil {
+		log.Warnf("记录聊天数据时出现错误: %v", err)
+		return ""
+	}
+	return msg.ID
+}
+
 // Release 释放Bot实例
 func (bot *CQBot) Release() {
-
 }
 
 func (bot *CQBot) dispatchEventMessage(m global.MSG) {
@@ -584,7 +614,9 @@ func (bot *CQBot) dispatchEventMessage(m global.MSG) {
 		}(f)
 	}
 	wg.Wait()
-	global.PutBuffer(event.buffer)
+	if event.buffer != nil {
+		global.PutBuffer(event.buffer)
+	}
 }
 
 func formatGroupName(group *client.GroupInfo) string {
@@ -622,4 +654,31 @@ func encodeMessageID(target int64, seq int32) string {
 		w.WriteUInt64(uint64(target))
 		w.WriteUInt32(uint32(seq))
 	}))
+}
+
+// encodeGuildMessageID 将频道信息编码为字符串
+// 当信息来源为 Channel 时 primaryID 为 guildID , subID 为 channelID
+// 当信息来源为 Direct 时 primaryID 为 guildID , subID 为 tinyID
+func encodeGuildMessageID(primaryID, subID, seq uint64, source MessageSourceType) string {
+	return base64.StdEncoding.EncodeToString(binary.NewWriterF(func(w *binary.Writer) {
+		w.WriteByte(byte(source))
+		w.WriteUInt64(primaryID)
+		w.WriteUInt64(subID)
+		w.WriteUInt64(seq)
+	}))
+}
+
+func decodeGuildMessageID(id string) (source *MessageSource, seq uint64) {
+	b, _ := base64.StdEncoding.DecodeString(id)
+	if len(b) < 25 {
+		return
+	}
+	r := binary.NewReader(b)
+	source = &MessageSource{
+		SourceType: MessageSourceType(r.ReadByte()),
+		PrimaryID:  uint64(r.ReadInt64()),
+		SubID:      uint64(r.ReadInt64()),
+	}
+	seq = uint64(r.ReadInt64())
+	return
 }
