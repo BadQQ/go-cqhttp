@@ -43,6 +43,7 @@ func makeRouter(eng *engine.Engine, app *iris.Application) {
 	app.Post("/admin/qq/sendmsg", appInterface.Login.SendMsg)                                               // 发送消息
 	app.Get("/admin/qq/guildlist", adapter.Content(appInterface.Login.GuildList))
 	app.Get("/admin/qq/channellist", adapter.Content(appInterface.Login.ChannelList))
+	app.Any("/admin/qq/deviceinfo", adapter.Content(appInterface.Login.DeviceInfo)) // 配置device.json 信息
 	app.Get("/admin/qq/help", func(ctx iris.Context) {
 		p := "html/help.md"
 		fs := common.GetStaticFs()
