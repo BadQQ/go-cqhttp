@@ -10,7 +10,7 @@
 FROM golang:1.17-bullseye AS builder
 COPY ./sources.list /etc/apt/sources.list
 RUN apt-get update && \
-    apt-get install -fy  build-essential clang \
+    apt-get install -fy  build-essential clang git \
     && go env -w CC=clang \
     && go env -w CXX=clang++ \
     && go env -w GO111MODULE=auto \
@@ -22,8 +22,10 @@ WORKDIR /build
 COPY ./ .
 
 RUN set -ex \
+    && BUILD=`date +%FT%T%z` \
+    && COMMIT_SHA1=`git rev-parse HEAD` \
     && cd /build \
-    && go build -ldflags "-s -w -extldflags '-static'" -v -o cqhttp
+    && go build -ldflags "-s -w -extldflags '-static' -X github.com/Mrs4s/go-cqhttp/internal/base.Version=${COMMIT_SHA1}_._${BUILD}" -v -o cqhttp
 
 FROM alpine:latest
 RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
