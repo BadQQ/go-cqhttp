@@ -7,4 +7,3 @@ session.token
 device.json
 data/
 logs/
-build.sh
