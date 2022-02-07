@@ -34,6 +34,13 @@ COPY ./init.sh /
 COPY --from=builder /build/cqhttp /usr/bin/cqhttp
 RUN chmod +x /usr/bin/cqhttp && chmod +x /init.sh
 
+ENV BOT_ADAPTER_ENABLE "false"
+ENV BOT_ADAPTER_POST_URL "http://bot-adapter:5800/msginput"
+ENV BOT_ADAPTER_POST_SECRET "secret"
+ENV BOT_ADAPTER_POST_INTERVAL "1500"
+ENV BOT_ADAPTER_POST_RETRIES "3"
+
+
 WORKDIR /data
 
 ENTRYPOINT [ "/init.sh" ]

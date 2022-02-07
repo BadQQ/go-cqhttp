@@ -69,7 +69,7 @@ func initApp() {
 func StartServer() {
 	setup()
 	goAdmin()
-	app := iris.New()
+	app := iris.New() //nolint:typecheck
 
 	eng := engine.Default()
 
@@ -77,7 +77,7 @@ func StartServer() {
 
 	cfg := &config.Config{
 		Databases: config.DatabaseList{
-			"default": {
+			"default": { //nolint:typecheck
 				File:       "./data/admin.db",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,

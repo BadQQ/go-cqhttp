@@ -3,6 +3,13 @@ package qq
 import (
 	"encoding/json"
 	"fmt"
+	"html"
+	"html/template"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	db2 "github.com/GoAdminGroup/go-admin/modules/db"
@@ -14,20 +21,15 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/themes/adminlte/components/infobox"
 	"github.com/Mrs4s/MiraiGo/client"
+	"github.com/kataras/iris/v12"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/loghook"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/utils/common"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/utils/jump"
 	"github.com/Mrs4s/go-cqhttp/db"
 	"github.com/Mrs4s/go-cqhttp/global"
-	"github.com/kataras/iris/v12"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"html"
-	"html/template"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // QqInfo 查看当前的qq状态
@@ -93,7 +95,7 @@ func (l *Dologin) QqInfo(ctx iris.Context) (types.Panel, error) {
 	rowlab := components.Row().SetContent(tmpl.Default().Box().WithHeadBorder().SetBody(lab1).GetContent()).GetContent()
 	link1 := components.Link().
 		SetURL("/admin/info/qq_config"). // 设置跳转路由
-		SetContent("修改配置信息"). // 设置链接内容
+		SetContent("修改配置信息").            // 设置链接内容
 		SetTabTitle("修改配置信息").
 		SetClass("btn btn-sm btn-danger").
 		GetContent()
