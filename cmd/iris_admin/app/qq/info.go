@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"html"
 	"html/template"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	db2 "github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	tmpl "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/themes/adminlte/components/infobox"
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/kataras/iris/v12"
@@ -54,6 +57,12 @@ func (l *Dologin) QqInfo(ctx iris.Context) (types.Panel, error) {
 		SetColor("red").
 		SetNumber(tmpl.HTML(status)).
 		SetIcon(icon.GooglePlus).
+		SetContent(tmpl.HTML(func() string {
+			if l.Cli.Online.Load() {
+				return fmt.Sprintf("登录协议：%s", client.SystemDeviceInfo.Protocol)
+			}
+			return ""
+		}())).
 		GetContent()
 	serverStatus := func(l *Dologin) string {
 		if l.Status {
@@ -127,9 +136,14 @@ func (l *Dologin) QqInfo(ctx iris.Context) (types.Panel, error) {
 		SetContent("使用帮助").
 		SetClass("btn btn-sm btn-default").
 		GetContent()
+	linkDeviceInfo := components.Link().
+		SetURL("/admin/qq/deviceinfo").
+		SetContent("修改device.json").
+		SetClass("btn btn-sm btn-default").
+		GetContent()
 	rown1 := components.Row().SetContent(tmpl.Default().Box().WithHeadBorder().
 		SetBody(
-			link1 + link2 + link3 + linkinfo + linkLog + linkChangeUserinfo + linkHelp,
+			link1 + link2 + link3 + linkinfo + linkLog + linkChangeUserinfo + linkHelp + linkDeviceInfo,
 		).GetContent()).GetContent()
 	link4 := components.Link().
 		SetURL("/admin/qq/friendlist").
@@ -941,4 +955,92 @@ func msgbox(name string, text template.HTML, isSelf bool) string {
 `, name, text)
 	}
 	return box
+}
+
+// DeviceInfo 读取 device.json
+func (l *Dologin) DeviceInfo(ctx iris.Context) (types.Panel, error) {
+	if err := l.CheckQQlogin(ctx); err != nil {
+		return types.Panel{}, nil
+	}
+	components := tmpl.Get(config.GetTheme())
+	if ctx.Method() == "POST" { // post处理
+		protol := ctx.PostValueIntDefault("protocol", 0)
+		switch protol {
+		case 1:
+			client.SystemDeviceInfo.Protocol = client.AndroidPhone
+		case 2:
+			client.SystemDeviceInfo.Protocol = client.AndroidWatch
+		case 3:
+			client.SystemDeviceInfo.Protocol = client.MacOS
+		case 4:
+			client.SystemDeviceInfo.Protocol = client.QiDian
+		case 5:
+			client.SystemDeviceInfo.Protocol = client.IPad
+		default:
+			log.Error("protocol not changed")
+			jsonStr := ctx.PostValue("json")
+			if err := client.SystemDeviceInfo.ReadJson([]byte(jsonStr)); err != nil {
+				return jump.Error(common.Msg{
+					Msg: "设置失败了，json解析错误",
+					URL: "/admin/qq/deviceinfo",
+				}), nil
+			}
+		}
+		_ = os.WriteFile("device.json", client.SystemDeviceInfo.ToJson(), 0o644)
+		return jump.Success(common.Msg{
+			Msg: "设置成功",
+			URL: "/admin/qq/deviceinfo",
+		}), nil
+	}
+	if err := client.SystemDeviceInfo.ReadJson([]byte(global.ReadAllText("device.json"))); err != nil {
+		return jump.Error(common.Msg{
+			Msg: fmt.Sprintf("加载设备信息失败: %v", err),
+			URL: "/admin/qq/info",
+		}), nil
+	}
+	btn1 := components.Button().SetType("submit").
+		SetContent("确认提交").
+		SetThemePrimary().
+		SetOrientationRight().
+		SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + `Save`).
+		GetContent()
+	btn2 := components.Button().SetType("reset").
+		SetContent("重置").
+		SetThemeWarning().
+		SetOrientationLeft().
+		GetContent()
+	col2 := components.Col().SetSize(types.SizeMD(8)).
+		SetContent(btn1 + btn2).GetContent()
+	var panel = types.NewFormPanel()
+	panel.AddField("快速修改登录协议", "protocol", db2.Int, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "Unset", Value: fmt.Sprintf("%d", client.Unset)},
+			{Text: "AndroidPhone", Value: fmt.Sprintf("%d", client.AndroidPhone)},
+			{Text: "AndroidWatch", Value: fmt.Sprintf("%d", client.AndroidWatch)},
+			{Text: "MacOS", Value: fmt.Sprintf("%d", client.MacOS)},
+			{Text: "QiDian", Value: fmt.Sprintf("%d", client.QiDian)},
+			{Text: "IPad", Value: fmt.Sprintf("%d", client.IPad)},
+		}).FieldDefault(fmt.Sprintf("%d", client.SystemDeviceInfo.Protocol))
+	panel.AddField("全局覆盖device.json", "json", db2.Varchar, form.TextArea).FieldPlaceholder("完整的device.json").FieldDefault(string(client.SystemDeviceInfo.ToJson())).FieldMust()
+	panel.SetTabGroups(types.TabGroups{
+		{"protocol", "json"},
+	})
+	panel.SetTabHeaders("调整你的device.json")
+	fields, headers := panel.GroupField()
+	aform := components.Form().
+		SetTabHeaders(headers).
+		SetTabContents(fields).
+		SetPrefix(config.PrefixFixSlash()).
+		SetUrl("/admin/qq/deviceinfo").
+		SetOperationFooter(col2)
+	return types.Panel{
+		Content: components.Box().
+			SetHeader(aform.GetDefaultBoxHeader(true)).
+			WithHeadBorder().
+			SetBody(aform.GetContent()).
+			GetContent(),
+		Title:       "调整你的device.json",
+		Callbacks:   panel.Callbacks,
+		Description: "可以快速修改登录类型，也可以全部json上传（全局覆盖的时候，协议选unset，否则只会变更登录协议)",
+	}, nil
 }

@@ -7,8 +7,8 @@ require (
 	github.com/GoAdminGroup/go-admin v1.2.23
 	github.com/GoAdminGroup/themes v0.0.43
 	github.com/Microsoft/go-winio v0.5.1
-	github.com/Mrs4s/MiraiGo v0.0.0-20211228140953-ab72f3dc28da
-	github.com/RomiChan/websocket v1.4.3-0.20220112132122-0fb50fcee646
+	github.com/Mrs4s/MiraiGo v0.0.0-20220117165008-3b461554b747
+	github.com/RomiChan/websocket v1.4.3-0.20220123145318-307a86b127bc
 	github.com/dustin/go-humanize v1.0.0
 	github.com/fumiama/go-hide-param v0.1.4
 	github.com/gabriel-vasile/mimetype v1.4.0
@@ -47,6 +47,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
+	github.com/fumiama/imgsz v0.0.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.7.7 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
@@ -67,7 +68,6 @@ require (
 	github.com/iris-contrib/pongo2 v0.0.1 // indirect
 	github.com/iris-contrib/schema v0.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect
