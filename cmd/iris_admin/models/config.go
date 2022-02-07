@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"os"
 	"strconv"
 	"time"
 
@@ -244,6 +245,18 @@ func parseServerHTTP(cfg *serverHTTP, c *config) map[string]yaml.Node {
 			MaxRetries      *uint64 `yaml:"max-retries"`
 			RetriesInterval *uint64 `yaml:"retries-interval"`
 		}{URL: post.URL, Secret: post.Secret})
+	}
+	// 从evn 中提取 bot-adapter的配置信息
+	botAdapterEnable := param.EnsureBool(os.Getenv("BOT_ADAPTER_ENABLE"), false)
+	if botAdapterEnable {
+		retris, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_RETRIES"), 10, 64)
+		interval, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_INTERVAL"), 10, 64)
+		httpConf.Post = append(httpConf.Post, struct {
+			URL             string  `yaml:"url"`
+			Secret          string  `yaml:"secret"`
+			MaxRetries      *uint64 `yaml:"max-retries"`
+			RetriesInterval *uint64 `yaml:"retries-interval"`
+		}{URL: os.Getenv("BOT_ADAPTER_POST_URL"), Secret: os.Getenv("BOT_ADAPTER_POST_SECRET"), MaxRetries: &retris, RetriesInterval: &interval})
 	}
 	_ = node.Encode(httpConf)
 	cfgMap := make(map[string]yaml.Node)
