@@ -95,7 +95,7 @@ func (l *Dologin) QqInfo(ctx iris.Context) (types.Panel, error) {
 	rowlab := components.Row().SetContent(tmpl.Default().Box().WithHeadBorder().SetBody(lab1).GetContent()).GetContent()
 	link1 := components.Link().
 		SetURL("/admin/info/qq_config"). // 设置跳转路由
-		SetContent("修改配置信息").            // 设置链接内容
+		SetContent("修改配置信息"). // 设置链接内容
 		SetTabTitle("修改配置信息").
 		SetClass("btn btn-sm btn-danger").
 		GetContent()

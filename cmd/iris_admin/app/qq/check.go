@@ -190,17 +190,17 @@ func (l *Dologin) CheckConfig(ctx iris.Context) {
 	if base.Debug {
 		log.SetLevel(log.DebugLevel)
 		log.SetReportCaller(true)
-		log.Warnf("已开启Debug模式.")
+		log.Warnf("已开启Debug模式")
 		log.Debugf("开发交流群: 192548878")
 	}
 	log.Info("用户交流群: 721829413")
 	if !global.PathExists("device.json") {
-		log.Warn("虚拟设备信息不存在, 将自动生成随机设备.")
+		log.Warn("虚拟设备信息不存在, 将自动生成随机设备")
 		client.GenRandomDevice()
 		_ = os.WriteFile("device.json", client.SystemDeviceInfo.ToJson(), 0o644)
-		log.Info("已生成设备信息并保存到 device.json 文件.")
+		log.Info("已生成设备信息并保存到 device.json 文件")
 	} else {
-		log.Info("将使用 device.json 内的设备信息运行Bot.")
+		log.Info("将使用 device.json 内的设备信息运行Bot")
 		if err := client.SystemDeviceInfo.ReadJson([]byte(global.ReadAllText("device.json"))); err != nil {
 			log.Fatalf("加载设备信息失败: %v", err)
 		}
@@ -223,7 +223,7 @@ func (l *Dologin) CheckConfig(ctx iris.Context) {
 			}
 			if err = l.Cli.TokenLogin(token); err != nil {
 				_ = os.Remove("session.token")
-				log.Warnf("恢复会话失败: %v , 尝试使用正常流程登录.", err)
+				log.Warnf("恢复会话失败: %v , 尝试使用正常流程登录", err)
 				time.Sleep(time.Second)
 				l.Cli.Disconnect()
 				l.Cli.Release()
@@ -241,7 +241,7 @@ func (l *Dologin) CheckConfig(ctx iris.Context) {
 		if !global.PathExists("password.encrypt") {
 			if base.Account.Password == "" {
 				jump.ErrorForIris(ctx, common.Msg{
-					Msg:  "无法进行加密，请在配置文件中的添加密码后重新启动.",
+					Msg:  "无法进行加密，请在配置文件中的添加密码后重新启动",
 					URL:  "/admin/info/qq_config",
 					Wait: 3,
 				})
@@ -259,7 +259,7 @@ func (l *Dologin) CheckConfig(ctx iris.Context) {
 		} else {
 			if base.Account.Password != "" {
 				jump.ErrorForIris(ctx, common.Msg{
-					Msg:  "密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动.",
+					Msg:  "密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动",
 					URL:  "/admin/info/qq_config",
 					Wait: 3,
 				})
@@ -313,10 +313,10 @@ func (l *Dologin) CheckConfig(ctx iris.Context) {
 		return
 	}
 	if (base.Account.Uin == 0 || (base.Account.Password == "" && !base.Account.Encrypt)) && !global.PathExists("session.token") {
-		msg := "账号密码未配置, 将使用二维码登录."
+		msg := "账号密码未配置, 将使用二维码登录"
 		var wait int64 = 3
 		if !base.FastStart {
-			msg += "将在 5秒 后继续."
+			msg += "将在 5秒 后继续"
 			wait = 5
 		}
 		jump.SuccessForIris(ctx, common.Msg{

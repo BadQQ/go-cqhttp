@@ -65,19 +65,19 @@ func newClient() *client.QQClient {
 	c := client.NewClientEmpty()
 	c.OnServerUpdated(func(bot *client.QQClient, e *client.ServerUpdatedEvent) bool {
 		if !base.UseSSOAddress {
-			log.Infof("收到服务器地址更新通知, 根据配置文件已忽略.")
+			log.Infof("收到服务器地址更新通知, 根据配置文件已忽略")
 			return false
 		}
-		log.Infof("收到服务器地址更新通知, 将在下一次重连时应用. ")
+		log.Infof("收到服务器地址更新通知, 将在下一次重连时应用")
 		return true
 	})
 	if global.PathExists("address.txt") {
-		log.Infof("检测到 address.txt 文件. 将覆盖目标IP.")
+		log.Infof("检测到 address.txt 文件. 将覆盖目标IP")
 		addr := global.ReadAddrFile("address.txt")
 		if len(addr) > 0 {
 			c.SetCustomServer(addr)
 		}
-		log.Infof("读取到 %v 个自定义地址.", len(addr))
+		log.Infof("读取到 %v 个自定义地址", len(addr))
 	}
 	c.OnLog(func(c *client.QQClient, e *client.LogEvent) {
 		switch e.Type {
