@@ -217,7 +217,7 @@ func (l *Dologin) sendGuildChannelMsg(guildID, channelID uint64, msg string) (st
 	}
 	var elem []message.IMessageElement
 	if msg == "" {
-		log.Warn("频道发送失败: 信息为空.")
+		log.Warn("频道发送失败: 信息为空")
 		return "", errors.New("EMPTY_MSG_ERROR")
 	}
 	elem = l.Bot.ConvertStringMessage(msg, coolq.MessageSourceGuildChannel)

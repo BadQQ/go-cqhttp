@@ -152,10 +152,10 @@ func (l *Dologin) DoEncryptKeyInput(ctx iris.Context) (types.Panel, error) {
 	}
 	base.PasswordHash = md5.Sum([]byte(base.Account.Password))
 	_ = os.WriteFile("password.encrypt", []byte(PasswordHashEncrypt(base.PasswordHash[:], []byte(byteKey))), 0o644)
-	log.Info("密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动.")
+	log.Info("密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动")
 	_ = models.Setbytekey(byteKey)
 	return jump.Success(common.Msg{
-		Msg:  "密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动.",
+		Msg:  "密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动",
 		URL:  "/admin/info/qq_config",
 		Wait: 3,
 	}), nil
@@ -193,7 +193,7 @@ func (l *Dologin) SessionTokenWeb(ctx *context.Context) (types.Panel, error) {
 	panel.AddField("编号选择", "num", db.Varchar, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
 			{Text: "使用会话缓存继续", Value: "1"}, //nolint:typecheck
-			{Text: "删除会话缓存并重启.", Value: "2"},
+			{Text: "删除会话缓存并重启", Value: "2"},
 		}).FieldDefault("1")
 	panel.SetTabGroups(types.TabGroups{
 		{"num"}, //nolint:typecheck
@@ -302,7 +302,7 @@ func (l *Dologin) DoQrlogin(ctx iris.Context) (types.Panel, error) {
 	switch s.State {
 	case client.QRCodeCanceled:
 		// log.Fatalf("扫码被用户取消.")
-		msg = "扫码被用户取消."
+		msg = "扫码被用户取消"
 		l.fetchQrCode()
 	case client.QRCodeTimeout:
 		// log.Fatalf("二维码过期")
@@ -310,7 +310,7 @@ func (l *Dologin) DoQrlogin(ctx iris.Context) (types.Panel, error) {
 		l.fetchQrCode()
 	case client.QRCodeWaitingForConfirm:
 		// log.Infof("扫码成功, 请在手机端确认登录.")
-		msg = "扫码成功, 请在手机端确认登录."
+		msg = "扫码成功, 请在手机端确认登录"
 	case client.QRCodeConfirmed:
 		res, err := l.Cli.QRCodeLogin(s.LoginInfo)
 		if err != nil {
@@ -367,17 +367,17 @@ func (l *Dologin) loginResponseProcessor(ctx iris.Context, res *client.LoginResp
 	time.Sleep(time.Second)
 	switch res.Error {
 	case client.SliderNeededError:
-		log.Warnf("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录.")
+		log.Warnf("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录")
 		l.Cli.Disconnect()
 		l.Cli.Release()
 		l.Cli = client.NewClientEmpty()
 		jump.ErrorForIris(ctx, common.Msg{
-			Msg: "登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录.",
+			Msg: "登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录",
 			URL: "/qq/qrlogin",
 		})
 		return errors.New("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录")
 	case client.NeedCaptcha:
-		log.Warnf("登录需要验证码.")
+		log.Warnf("登录需要验证码")
 		// _ = os.WriteFile("captcha.jpg", res.CaptchaImage, 0o644)
 		// log.Warnf("请输入验证码 (captcha.jpg)： (Enter 提交)")
 		jump.ErrorForIris(ctx, common.Msg{
@@ -386,20 +386,20 @@ func (l *Dologin) loginResponseProcessor(ctx iris.Context, res *client.LoginResp
 		})
 		return errors.New("登录需要验证码")
 	case client.SMSNeededError:
-		log.Warnf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+		log.Warnf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 		if !l.Cli.RequestSMS() {
 			log.Warnf("发送验证码失败，可能是请求过于频繁.")
 			jump.ErrorForIris(ctx, common.Msg{
-				Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone) + "发送验证码失败，可能是请求过于频繁.",
+				Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone) + "发送验证码失败，可能是请求过于频繁.",
 				URL: "/qq/qrlogin",
 			})
 			return errors.New("发送验证码失败，可能是请求过于频繁")
 		}
 		jump.ErrorForIris(ctx, common.Msg{
-			Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone),
+			Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone),
 			URL: "/qq/sms_input",
 		})
-		return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+		return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 	case client.SMSOrVerifyNeededError:
 		// log.Warnf("账号已开启设备锁，请选择验证方式:")
 		// log.Warnf("1. 向手机 %v 发送短信验证码", res.SMSPhone)
@@ -418,28 +418,28 @@ func (l *Dologin) loginResponseProcessor(ctx iris.Context, res *client.LoginResp
 		// }
 		// fallthrough
 		if !l.Cli.RequestSMS() {
-			log.Warnf("发送验证码失败，可能是请求过于频繁.")
+			log.Warnf("发送验证码失败，可能是请求过于频繁")
 			jump.ErrorForIris(ctx, common.Msg{
-				Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone) + "发送验证码失败，可能是请求过于频繁.",
+				Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone) + "发送验证码失败，可能是请求过于频繁",
 				URL: "/qq/qrlogin",
 			})
 			return errors.New("发送验证码失败，可能是请求过于频繁")
 		}
 		jump.ErrorForIris(ctx, common.Msg{
-			Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone),
+			Msg: fmt.Sprintf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone),
 			URL: "/qq/sms_input",
 		})
-		return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+		return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 	case client.UnsafeDeviceError:
 		// log.Warnf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot.", res.VerifyUrl)
 		// log.Infof("按 Enter 或等待 5s 后继续....")
 		// readLineTimeout(time.Second*5, "")
 		// os.Exit(0)
 		jump.ErrorForIris(ctx, common.Msg{
-			Msg: fmt.Sprintf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot.", res.VerifyUrl),
+			Msg: fmt.Sprintf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot", res.VerifyUrl),
 			URL: res.VerifyUrl,
 		})
-		return errors.Errorf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot.", res.VerifyUrl)
+		return errors.Errorf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot", res.VerifyUrl)
 	case client.OtherLoginError, client.UnknownLoginError, client.TooManySMSRequestError:
 		msg := res.ErrorMessage
 		if strings.Contains(msg, "版本") {
@@ -598,7 +598,7 @@ func (l *Dologin) DoLoginBackend() {
 				time.Sleep(time.Second * time.Duration(base.Reconnect.Delay))
 				for {
 					if base.Reconnect.Disabled {
-						log.Warnf("未启用自动重连, 将退出.")
+						log.Warnf("未启用自动重连, 将退出")
 						time.Sleep(time.Second)
 						l.Cli.Disconnect()
 						l.Cli.Release()
@@ -689,10 +689,10 @@ func (l *Dologin) DoLoginBackend() {
 			log.Infof("登录成功 欢迎使用: %v", l.Cli.Nickname)
 			log.Info("开始加载好友列表...")
 			global.Check(l.Cli.ReloadFriendList(), true)
-			log.Infof("共加载 %v 个好友.", len(l.Cli.FriendList))
+			log.Infof("共加载 %v 个好友", len(l.Cli.FriendList))
 			log.Infof("开始加载群列表...")
 			global.Check(l.Cli.ReloadGroupList(), true)
-			log.Infof("共加载 %v 个群.", len(l.Cli.GroupList))
+			log.Infof("共加载 %v 个群", len(l.Cli.GroupList))
 			if uint(base.Account.Status) >= uint(len(allowStatus)) {
 				base.Account.Status = 0
 			}
@@ -710,7 +710,7 @@ func (l *Dologin) DoLoginBackend() {
 				Step int
 			}{Code: 0, Msg: "登录成功", Step: 0}
 			// servers.Run(coolq.NewQQBot(l.Cli))
-			log.Info("资源初始化完成, 开始处理信息.")
+			log.Info("资源初始化完成, 开始处理信息")
 			log.Info("アトリは、高性能ですから!")
 		case "shutdown":
 			time.Sleep(time.Second * 3)
@@ -778,17 +778,17 @@ func (l *Dologin) AutoLoginCommon() {
 	if base.Debug {
 		log.SetLevel(log.DebugLevel)
 		log.SetReportCaller(true)
-		log.Warnf("已开启Debug模式.")
+		log.Warnf("已开启Debug模式")
 		log.Debugf("开发交流群: 192548878")
 	}
 	log.Info("用户交流群: 721829413")
 	if !global.PathExists("device.json") {
-		log.Warn("虚拟设备信息不存在, 将自动生成随机设备.")
+		log.Warn("虚拟设备信息不存在, 将自动生成随机设备")
 		client.GenRandomDevice()
 		_ = os.WriteFile("device.json", client.SystemDeviceInfo.ToJson(), 0o644)
-		log.Info("已生成设备信息并保存到 device.json 文件.")
+		log.Info("已生成设备信息并保存到 device.json 文件")
 	} else {
-		log.Info("将使用 device.json 内的设备信息运行Bot.")
+		log.Info("将使用 device.json 内的设备信息运行Bot")
 		if err := client.SystemDeviceInfo.ReadJson([]byte(global.ReadAllText("device.json"))); err != nil {
 			log.Fatalf("加载设备信息失败: %v", err)
 		}
@@ -911,7 +911,7 @@ func (l *Dologin) AutoLoginCommon() {
 			}
 			if err = l.Cli.TokenLogin(token); err != nil {
 				_ = os.Remove("session.token")
-				log.Warnf("恢复会话失败: %v , 尝试使用正常流程登录.", err)
+				log.Warnf("恢复会话失败: %v , 尝试使用正常流程登录", err)
 				time.Sleep(time.Second)
 				l.Cli.Disconnect()
 				l.Cli.Release()
@@ -932,7 +932,7 @@ func (l *Dologin) AutoLoginCommon() {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 3006, Msg: "自动登录失败： 无法进行加密，请在配置文件中的添加密码后重新启动.", Step: 0}
+				}{Code: 3006, Msg: "自动登录失败： 无法进行加密，请在配置文件中的添加密码后重新启动", Step: 0}
 				return
 			}
 
@@ -941,7 +941,7 @@ func (l *Dologin) AutoLoginCommon() {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 3006, Msg: "自动登录失败： 无法进行加密，请在配置文件中的添加密码后重新启动.", Step: 0}
+				}{Code: 3006, Msg: "自动登录失败： 无法进行加密，请在配置文件中的添加密码后重新启动", Step: 0}
 				return
 			}
 		} else {
@@ -950,7 +950,7 @@ func (l *Dologin) AutoLoginCommon() {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 3006, Msg: "自动登录失败：密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动.", Step: 0}
+				}{Code: 3006, Msg: "自动登录失败：密码已加密，为了您的账号安全，请删除配置文件中的密码后重新启动", Step: 0}
 				return
 			}
 			if len(byteKey) == 0 {
@@ -958,7 +958,7 @@ func (l *Dologin) AutoLoginCommon() {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 3006, Msg: "自动登录失败：无法进行加密，请在配置文件中的添加密码后重新启动.", Step: 0}
+				}{Code: 3006, Msg: "自动登录失败：无法进行加密，请在配置文件中的添加密码后重新启动", Step: 0}
 				return
 			}
 
@@ -1007,12 +1007,12 @@ func (l *Dologin) AutoLoginCommon() {
 		return
 	}
 	if (base.Account.Uin == 0 || (base.Account.Password == "" && !base.Account.Encrypt)) && !global.PathExists("session.token") {
-		log.Warnf("账号密码未配置, 将使用二维码登录.")
+		log.Warnf("账号密码未配置, 将使用二维码登录")
 		l.ErrMsg = struct {
 			Code int
 			Msg  string
 			Step int
-		}{Code: 2000, Msg: "账号密码未配置, 将使用二维码登录.", Step: 1}
+		}{Code: 2000, Msg: "账号密码未配置, 将使用二维码登录", Step: 1}
 		return
 	}
 }
@@ -1034,7 +1034,7 @@ func (l *Dologin) loginResponseProcessorBackend(res *client.LoginResponse) error
 		time.Sleep(time.Second)
 		switch res.Error {
 		case client.SliderNeededError:
-			log.Warnf("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录.")
+			log.Warnf("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录")
 			l.Cli.Disconnect()
 			l.Cli.Release()
 			l.Cli = client.NewClientEmpty()
@@ -1042,10 +1042,10 @@ func (l *Dologin) loginResponseProcessorBackend(res *client.LoginResponse) error
 				Code int
 				Msg  string
 				Step int
-			}{Code: 2001, Msg: "登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录.", Step: 2}
+			}{Code: 2001, Msg: "登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录", Step: 2}
 			return errors.New("登录需要滑条验证码, 请使用手机QQ扫描二维码以继续登录")
 		case client.NeedCaptcha:
-			log.Warnf("登录需要验证码.")
+			log.Warnf("登录需要验证码")
 			// _ = os.WriteFile("captcha.jpg", res.CaptchaImage, 0o644)
 			// log.Warnf("请输入验证码 (captcha.jpg)： (Enter 提交)")
 			l.ErrMsg = struct {
@@ -1055,14 +1055,14 @@ func (l *Dologin) loginResponseProcessorBackend(res *client.LoginResponse) error
 			}{Code: 2002, Msg: "自动登录失败，需要验证码", Step: 2}
 			return errors.New("登录需要验证码")
 		case client.SMSNeededError:
-			log.Warnf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+			log.Warnf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 			if !l.Cli.RequestSMS() {
-				log.Warnf("发送验证码失败，可能是请求过于频繁.")
+				log.Warnf("发送验证码失败，可能是请求过于频繁")
 				l.ErrMsg = struct {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 2003, Msg: "自动登录失败，发送验证码失败，可能是请求过于频繁.", Step: 2}
+				}{Code: 2003, Msg: "自动登录失败，发送验证码失败，可能是请求过于频繁", Step: 2}
 				return errors.New("发送验证码失败，可能是请求过于频繁")
 			}
 			l.ErrMsg = struct {
@@ -1070,15 +1070,15 @@ func (l *Dologin) loginResponseProcessorBackend(res *client.LoginResponse) error
 				Msg  string
 				Step int
 			}{Code: 2004, Msg: "自动登录失败，账号已开启设备锁.需要验证码", Step: 2}
-			return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+			return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 		case client.SMSOrVerifyNeededError:
 			if !l.Cli.RequestSMS() {
-				log.Warnf("发送验证码失败，可能是请求过于频繁.")
+				log.Warnf("发送验证码失败，可能是请求过于频繁")
 				l.ErrMsg = struct {
 					Code int
 					Msg  string
 					Step int
-				}{Code: 2003, Msg: "自动登录失败，发送验证码失败，可能是请求过于频繁.", Step: 2}
+				}{Code: 2003, Msg: "自动登录失败，发送验证码失败，可能是请求过于频繁", Step: 2}
 				return errors.New("发送验证码失败，可能是请求过于频繁")
 			}
 			l.ErrMsg = struct {
@@ -1086,16 +1086,16 @@ func (l *Dologin) loginResponseProcessorBackend(res *client.LoginResponse) error
 				Msg  string
 				Step int
 			}{Code: 2004, Msg: "自动登录失败，账号已开启设备锁.需要验证码", Step: 2}
-			return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码.", res.SMSPhone)
+			return errors.Errorf("账号已开启设备锁,  向手机 %v 发送短信验证码", res.SMSPhone)
 		case client.UnsafeDeviceError:
-			log.Warnf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot.", res.VerifyUrl)
+			log.Warnf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot", res.VerifyUrl)
 			log.Infof("按 Enter 或等待 5s 后继续....")
 			l.ErrMsg = struct {
 				Code int
 				Msg  string
 				Step int
 			}{Code: 2005, Msg: "自动登录失败，账号已开启设备锁.验证", Step: 2}
-			return errors.Errorf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot.", res.VerifyUrl)
+			return errors.Errorf("账号已开启设备锁，请前往 -> %v <- 验证后重启Bot", res.VerifyUrl)
 		case client.OtherLoginError, client.UnknownLoginError, client.TooManySMSRequestError:
 			msg := res.ErrorMessage
 			if strings.Contains(msg, "版本") {
