@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/app/adapter"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -50,10 +52,11 @@ type Dologin struct {
 		Msg  string
 		Step int
 	}
-	Status bool // 是否已经启动过net server
-	Conn   chan string
-	Bot    *coolq.CQBot
-	Weblog *loghook.WebLogWriter
+	Status      bool // 是否已经启动过net server
+	Conn        chan string
+	Bot         *coolq.CQBot
+	Weblog      *loghook.WebLogWriter
+	AdapterInfo *adapter.Info
 }
 
 // NewDologin 初始化
@@ -100,7 +103,7 @@ func (l *Dologin) EncryptPasswordEnterWeb(ctx *context.Context) (types.Panel, er
 		GetContent()
 	link := tmpl.Default().Link().
 		SetURL("/admin/info/qq_config"). // 设置跳转路由
-		SetContent("返回配置页面"). // 设置链接内容
+		SetContent("返回配置页面").            // 设置链接内容
 		SetClass("btn-group btn btn-sm btn-info btn-flat pull-left").
 		GetContent()
 	col1 := components.Col().SetSize(types.SizeMD(8)).SetContent(link).GetContent()
@@ -115,7 +118,7 @@ func (l *Dologin) EncryptPasswordEnterWeb(ctx *context.Context) (types.Panel, er
 
 	panel.AddField("密码加密key", "byteKey", db.Varchar, form.Text).FieldPlaceholder("密码加密和解密都需要的key").FieldMust()
 	panel.SetTabGroups(types.TabGroups{
-		{"byteKey"}, //nolint:typecheck
+		{"byteKey"},
 	})
 	panel.SetTabHeaders("你开启了密码加密功能，请输入你的加密算法的key")
 	fields, headers := panel.GroupField()
@@ -176,7 +179,7 @@ func (l *Dologin) SessionTokenWeb(ctx *context.Context) (types.Panel, error) {
 		GetContent()
 	link := tmpl.Default().Link().
 		SetURL("/admin/info/qq_config"). // 设置跳转路由
-		SetContent("返回配置页面"). // 设置链接内容
+		SetContent("返回配置页面").            // 设置链接内容
 		// OpenInNewTab().  // 是否在新的tab页打开
 		// SetTabTitle("Manager Detail").  // 设置tab的标题
 		GetContent()
@@ -192,11 +195,11 @@ func (l *Dologin) SessionTokenWeb(ctx *context.Context) (types.Panel, error) {
 
 	panel.AddField("编号选择", "num", db.Varchar, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "使用会话缓存继续", Value: "1"}, //nolint:typecheck
+			{Text: "使用会话缓存继续", Value: "1"},
 			{Text: "删除会话缓存并重启", Value: "2"},
 		}).FieldDefault("1")
 	panel.SetTabGroups(types.TabGroups{
-		{"num"}, //nolint:typecheck
+		{"num"},
 	})
 	panel.SetTabHeaders("警告: 配置文件内的QQ号 与缓存内的QQ号  不相同")
 	fields, headers := panel.GroupField()

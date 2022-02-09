@@ -2,7 +2,7 @@ version: '3'
 services:
   go-cqhttp:
     container_name: go-cqhttp
-    image: scjtqs/cqhttp:1.0.2
+    image: scjtqs/cqhttp:1.0.3
     restart: always
     privileged: true
     ports:
@@ -12,3 +12,11 @@ services:
       - ./cqhttp-data:/data
     environment:
       - UPDATE=1
+      - BOT_ADAPTER_ENABLE=false
+      - BOT_ADAPTER_POST_URL=http://bot-adapter:5800/msginput
+      - BOT_ADAPTER_POST_SECRET=secret
+      - BOT_ADAPTER_POST_INTERVAL=1500
+      - BOT_ADAPTER_POST_RETRIES=3
+      - BOT_ADAPTER_APPID=go-cqhttp
+      - BOT_ADAPTER_APPSECRET=HGJKLHSADJKLG
+      - BOT_ADAPTER_GRPC_ADDR=bot-adapter:8001

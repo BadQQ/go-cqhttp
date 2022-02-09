@@ -66,4 +66,14 @@ func makeRouter(eng *engine.Engine, app *iris.Application) {
 		Gzip:      true,
 		ShowList:  false,
 	})
+	/**
+	bot-adapter
+	*/
+	app.Get("/admin/adapter/applist", adapter.Content(appInterface.Adapter.GetAppList))   // bot-adapter 的应用列表
+	app.Get("/admin/adapter/viewapp", adapter.Content(appInterface.Adapter.ViewApp))      // bot-adapter 查看app信息
+	app.Get("/admin/adapter/editapp", adapter.Content(appInterface.Adapter.EditApp))      // bot-adapter 编辑app信息
+	app.Get("/admin/adapter/addapp", adapter.Content(appInterface.Adapter.ViewApp))       // bot-adapter 新增app
+	app.Get("/admin/adapter/delapp", adapter.Content(appInterface.Adapter.DelApp))        // bot-adapter 删除app
+	app.Post("/admin/adapter/saveapp", adapter.Content(appInterface.Adapter.SaveApp))     // bot-adapter 保存app
+	app.Get("/admin/adapter/reboot", adapter.Content(appInterface.Adapter.RebootAdatper)) // bot-adapter 重启，使修改后的配置生效
 }
