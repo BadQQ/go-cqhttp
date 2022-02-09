@@ -959,7 +959,7 @@ func msgbox(name string, text template.HTML, isSelf bool) string {
 
 // DeviceInfo 读取 device.json
 func (l *Dologin) DeviceInfo(ctx iris.Context) (types.Panel, error) {
-	if err := l.CheckQQlogin(ctx); err != nil {
+	if err := l.checkAuth(ctx); err != nil {
 		return types.Panel{}, nil
 	}
 	components := tmpl.Get(config.GetTheme())
