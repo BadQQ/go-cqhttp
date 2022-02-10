@@ -247,16 +247,16 @@ func parseServerHTTP(cfg *serverHTTP, c *config) map[string]yaml.Node {
 		}{URL: post.URL, Secret: post.Secret})
 	}
 	// 从evn 中提取 bot-adapter的配置信息
-	botAdapterEnable := param.EnsureBool(os.Getenv("BOT_ADAPTER_ENABLE"), false)
-	if botAdapterEnable {
-		retris, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_RETRIES"), 10, 64)
-		interval, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_INTERVAL"), 10, 64)
-		httpConf.Post = append(httpConf.Post, struct {
-			URL             string  `yaml:"url"`
-			Secret          string  `yaml:"secret"`
-			MaxRetries      *uint64 `yaml:"max-retries"`
-			RetriesInterval *uint64 `yaml:"retries-interval"`
-		}{URL: os.Getenv("BOT_ADAPTER_POST_URL"), Secret: os.Getenv("BOT_ADAPTER_POST_SECRET"), MaxRetries: &retris, RetriesInterval: &interval})
+	adapterConfig, err := GetAdapterConfig()
+	if err == nil {
+		if adapterConfig.Enable {
+			httpConf.Post = append(httpConf.Post, struct {
+				URL             string  `yaml:"url"`
+				Secret          string  `yaml:"secret"`
+				MaxRetries      *uint64 `yaml:"max-retries"`
+				RetriesInterval *uint64 `yaml:"retries-interval"`
+			}{URL: adapterConfig.PostAddr, Secret: adapterConfig.PostSecret, MaxRetries: &adapterConfig.PostRetris, RetriesInterval: &adapterConfig.PostInterval})
+		}
 	}
 	_ = node.Encode(httpConf)
 	cfgMap := make(map[string]yaml.Node)
@@ -325,4 +325,39 @@ func Getbytekey() ([]byte, error) {
 func Setbytekey(bytekey string) error {
 	result := NewQqConfig().Where("key=?", "account_encrypt_bytekey").Update("value", bytekey)
 	return result.Error
+}
+
+// AdapterConfig adapter的配置信息
+type AdapterConfig struct {
+	Enable         bool   `json:"enable"`           // 是否启用
+	AppID          string `json:"app_id"`           // 注册在adapter的appID
+	AppSecret      string `json:"app_secret"`       // 注册在adapter的appSecret
+	AdapterGrpcAdd string `json:"adapter_grpc_add"` // adapter的grpc的地址
+	PostAddr       string `json:"post_addr"`        // adapter接收post推送的地址
+	PostSecret     string `json:"post_secret"`      // adapter接收post推送的secret秘钥（用于校验推送是否有效）
+	PostRetris     uint64 `json:"post_retris"`      // post的重试次数
+	PostInterval   uint64 `json:"post_interval"`    // post的重试间隔
+}
+
+// GetAdapterConfig 获取adapter的配置信息
+// TODO 目前仅从环境变量读取，后面可以考虑写入db
+func GetAdapterConfig() (*AdapterConfig, error) {
+	var conf AdapterConfig
+	if param.EnsureBool(os.Getenv("BOT_ADAPTER_ENABLE"), false) {
+		retris, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_RETRIES"), 10, 64)
+		interval, _ := strconv.ParseUint(os.Getenv("BOT_ADAPTER_POST_INTERVAL"), 10, 64)
+		conf = AdapterConfig{
+			Enable:         param.EnsureBool(os.Getenv("BOT_ADAPTER_ENABLE"), false),
+			AppID:          os.Getenv("BOT_ADAPTER_APPID"),
+			AppSecret:      os.Getenv("BOT_ADAPTER_APPSECRET"),
+			AdapterGrpcAdd: os.Getenv("BOT_ADAPTER_GRPC_ADDR"),
+			PostAddr:       os.Getenv("BOT_ADAPTER_POST_URL"),
+			PostSecret:     os.Getenv("BOT_ADAPTER_POST_SECRET"),
+			PostRetris:     retris,
+			PostInterval:   interval,
+		}
+	} else {
+		return nil, errors.New("adapter not enabled")
+	}
+	return &conf, nil
 }

@@ -162,8 +162,28 @@ func (l *Dologin) QqInfo(ctx iris.Context) (types.Panel, error) {
 		GetContent()
 	rown2 := components.Row().SetContent(tmpl.Default().Box().WithHeadBorder().SetBody(link4 + link5 + linkGuildList).GetContent()).GetContent()
 
+	rown3 := components.Row()
+	if l.AdapterInfo.Status {
+		labAdapter := components.Label().SetType("warning").SetContent("bot-adapter控制：").GetContent()
+		linkAppadd := components.Link().
+			SetURL("/admin/adapter/addapp").
+			SetContent("bot-adapter增加app配置").
+			SetClass("btn btn-sm btn-primary").
+			GetContent()
+		linkApplist := components.Link().
+			SetURL("/admin/adapter/applist").
+			SetContent("adapter的app列表").
+			SetClass("btn btn-sm btn-info").
+			GetContent()
+		linkAdapterReboot := components.Link().
+			SetURL("/admin/adapter/reboot").
+			SetContent("重启bot-adapter（修改配置后使其生效）").
+			SetClass("btn btn-sm btn-danger").
+			GetContent()
+		rown3.SetContent(labAdapter + linkAppadd + linkApplist + linkAdapterReboot)
+	}
 	return types.Panel{
-		Content:     row1 + rowlab + rown1 + rown2,
+		Content:     row1 + rowlab + rown1 + rown2 + rown3.GetContent(),
 		Title:       "qq状态",
 		Description: "当前qq状态信息",
 	}, nil
@@ -959,7 +979,7 @@ func msgbox(name string, text template.HTML, isSelf bool) string {
 
 // DeviceInfo 读取 device.json
 func (l *Dologin) DeviceInfo(ctx iris.Context) (types.Panel, error) {
-	if err := l.CheckQQlogin(ctx); err != nil {
+	if err := l.checkAuth(ctx); err != nil {
 		return types.Panel{}, nil
 	}
 	components := tmpl.Get(config.GetTheme())

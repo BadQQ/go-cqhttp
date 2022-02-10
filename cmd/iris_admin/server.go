@@ -19,7 +19,7 @@ import (
 	"github.com/kataras/iris/v12"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/app/info"
+	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/app/adapter"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/app/qq"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/models"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/tables"
@@ -52,24 +52,25 @@ func setup() {
 
 // App 网站服务的对象
 type App struct {
-	Login *qq.Dologin
-	Info  *info.Info
+	Login   *qq.Dologin
+	Adapter *adapter.Info
 }
 
 var appInterface *App
 
 func initApp() {
 	appInterface = &App{
-		Login: qq.NewDologin(),
-		Info:  info.NewInfo(),
+		Login:   qq.NewDologin(),
+		Adapter: adapter.NewInfo(),
 	}
+	appInterface.Login.AdapterInfo = appInterface.Adapter // 将adapter的包导入到qq侧
 }
 
 // StartServer 启动web服务
 func StartServer() {
 	setup()
 	goAdmin()
-	app := iris.New() //nolint:typecheck
+	app := iris.New()
 
 	eng := engine.Default()
 
@@ -77,7 +78,7 @@ func StartServer() {
 
 	cfg := &config.Config{
 		Databases: config.DatabaseList{
-			"default": { //nolint:typecheck
+			"default": {
 				File:       "./data/admin.db",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
