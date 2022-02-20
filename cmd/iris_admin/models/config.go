@@ -181,7 +181,10 @@ func paraseConfig(configs []QQConfig) (*config2.Config, error) {
 		},
 	}
 	cfb.Database = make(map[string]yaml.Node)
-	dbConf := &config2.LevelDBConfig{Enable: param.EnsureBool(cfgs.DatabasesLeveldbEnable, true)}
+	dbConf := &struct {
+		Enable bool `yaml:"enable"`
+	}{Enable: param.EnsureBool(cfgs.DatabasesLeveldbEnable, true)}
+	// dbConf := &config2.LevelDBConfig{Enable: param.EnsureBool(cfgs.DatabasesLeveldbEnable, true)}
 	cfb.Database["leveldb"] = func() yaml.Node {
 		n := &yaml.Node{}
 		_ = n.Encode(dbConf)

@@ -3,20 +3,15 @@ module github.com/Mrs4s/go-cqhttp
 go 1.17
 
 require (
-	github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f
 	github.com/GoAdminGroup/go-admin v1.2.23
 	github.com/GoAdminGroup/themes v0.0.43
 	github.com/Microsoft/go-winio v0.5.1
-	github.com/Mrs4s/MiraiGo v0.0.0-20220209092529-5d071b034c17
+	github.com/Mrs4s/MiraiGo v0.0.0-20220218065747-0578942d86ab
 	github.com/RomiChan/websocket v1.4.3-0.20220123145318-307a86b127bc
-	github.com/dustin/go-humanize v1.0.0
 	github.com/fumiama/go-hide-param v0.1.4
 	github.com/gabriel-vasile/mimetype v1.4.0
-	github.com/gocq/qrcode v0.0.0-20211114040510-366b953fcd98
 	github.com/jinzhu/gorm v1.9.16
-	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/kataras/iris/v12 v12.1.8
-	github.com/klauspost/compress v1.14.2
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mattn/go-colorable v0.1.12
 	github.com/pkg/errors v0.9.1
@@ -24,11 +19,11 @@ require (
 	github.com/segmentio/asm v1.1.3
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
-	github.com/syndtr/goleveldb v1.0.0
+	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	github.com/tidwall/gjson v1.14.0
 	github.com/wdvxdr1123/go-silk v0.0.0-20210316130616-d47b553def60
-	go.mongodb.org/mongo-driver v1.8.1
-	golang.org/x/crypto v0.0.0-20220209195652-db638375bc3a
+	go.mongodb.org/mongo-driver v1.8.3
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
@@ -36,14 +31,14 @@ require (
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
-	github.com/BurntSushi/toml v1.0.0 // indirect
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
-	github.com/CloudyKit/jet/v3 v3.0.1 // indirect
+	github.com/CloudyKit/jet/v3 v3.0.0 // indirect
 	github.com/GoAdminGroup/html v0.0.1 // indirect
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e // indirect
-	github.com/RomiChan/protobuf v0.0.0-20211223055824-048df49a8956 // indirect
-	github.com/Shopify/goreferrer v0.0.0-20210630161223-536fa16abd6f // indirect
-	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/RomiChan/protobuf v0.0.0-20220213164748-44b69c8bdec0 // indirect
+	github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -59,22 +54,21 @@ require (
 	github.com/gobuffalo/logger v1.0.6 // indirect
 	github.com/gobuffalo/packd v1.0.1 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.3 // indirect
-	github.com/gocq/rs v1.0.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/golang/snappy v0.0.3 // indirect
-	github.com/google/uuid v1.1.2 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
-	github.com/iris-contrib/jade v1.1.4 // indirect
+	github.com/iris-contrib/jade v1.1.3 // indirect
 	github.com/iris-contrib/pongo2 v0.0.1 // indirect
-	github.com/iris-contrib/schema v0.0.6 // indirect
+	github.com/iris-contrib/schema v0.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect
-	github.com/kataras/golog v0.1.7 // indirect
-	github.com/kataras/pio v0.0.10 // indirect
+	github.com/kataras/golog v0.0.10 // indirect
+	github.com/kataras/pio v0.0.2 // indirect
 	github.com/kataras/sitemap v0.0.5 // indirect
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/markbates/errx v1.1.0 // indirect
@@ -91,11 +85,10 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.11 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
-	github.com/ryanuber/columnize v2.1.2+incompatible // indirect
+	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
