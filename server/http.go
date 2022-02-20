@@ -51,7 +51,6 @@ type httpServerPost struct {
 }
 
 type httpServer struct {
-	HTTP        *http.Server
 	api         *api.Caller
 	accessToken string
 }
@@ -87,11 +86,11 @@ const httpDefault = `
       post:           # 反向HTTP POST地址列表
       #- url: ''                # 地址
       #  secret: ''             # 密钥
-	  #  max-retries: 3         # 最大重试，0 时禁用
+      #  max-retries: 3         # 最大重试，0 时禁用
       #  retries-interval: 1500 # 重试时间，单位毫秒，0 时立即
       #- url: http://127.0.0.1:5701/ # 地址
       #  secret: ''                  # 密钥
-	  #  max-retries: 10             # 最大重试，0 时禁用
+      #  max-retries: 10             # 最大重试，0 时禁用
       #  retries-interval: 1000      # 重试时间，单位毫秒，0 时立即
 `
 
@@ -259,11 +258,11 @@ func runHTTP(bot *coolq.CQBot, node yaml.Node) {
 
 	go func() {
 		log.Infof("CQ HTTP 服务器已启动: %v", addr)
-		s.HTTP = &http.Server{
+		server := &http.Server{
 			Addr:    addr,
 			Handler: s,
 		}
-		if err := s.HTTP.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error(err)
 			log.Infof("HTTP 服务启动失败, 请检查端口是否被占用.")
 			log.Warnf("将在五秒后退出.")
