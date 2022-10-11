@@ -2,7 +2,7 @@ version: '3'
 services:
   go-cqhttp:
     container_name: go-cqhttp
-    image: scjtqs/cqhttp:1.0.3
+    image: scjtqs/cqhttp:1.0.4
     restart: always
     privileged: true
     ports:
