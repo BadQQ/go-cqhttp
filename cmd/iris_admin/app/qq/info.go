@@ -529,9 +529,9 @@ func (l *Dologin) GetGroupDetal(ctx iris.Context) (types.Panel, error) {
 		for _, g := range info {
 			if g.Code == guin {
 				group = &client.GroupInfo{
-					Code:            g.Code,
-					Name:            g.Name,
-					Memo:            g.Memo,
+					Code: g.Code,
+					Name: g.Name,
+					// Memo:            g.Memo,
 					Uin:             0,
 					OwnerUin:        0,
 					GroupCreateTime: 0,
@@ -566,7 +566,7 @@ func (l *Dologin) GetGroupDetal(ctx iris.Context) (types.Panel, error) {
 			},
 			{
 				"key": {Content: "memo"},
-				"val": {Content: tmpl.HTML(group.Memo)},
+				"val": {Content: tmpl.HTML("")},
 			},
 			{
 				"key": {Content: "code"},
@@ -868,7 +868,7 @@ func (l *Dologin) getGroupInfo(groupID int64) (*client.GroupInfo, error) {
 				return &client.GroupInfo{
 					Code: g.Code,
 					Name: g.Name,
-					Memo: g.Memo,
+					// Memo: g.Memo,
 				}, nil
 			}
 		}

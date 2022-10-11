@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"fmt"
+	"github.com/Mrs4s/go-cqhttp/internal/selfdiagnosis"
 	"os"
 	"strings"
 	"sync"
@@ -590,7 +591,7 @@ func (l *Dologin) DoLoginBackend() {
 		case "loginsuccess":
 			var times uint = 1 // 重试次数
 			var reLoginLock sync.Mutex
-			l.Cli.OnDisconnected(func(q *client.QQClient, e *client.ClientDisconnectedEvent) {
+			l.Cli.DisconnectedEvent.Subscribe(func(q *client.QQClient, e *client.ClientDisconnectedEvent) {
 				reLoginLock.Lock()
 				defer reLoginLock.Unlock()
 				times = 1
@@ -715,6 +716,9 @@ func (l *Dologin) DoLoginBackend() {
 			// servers.Run(coolq.NewQQBot(l.Cli))
 			log.Info("资源初始化完成, 开始处理信息")
 			log.Info("アトリは、高性能ですから!")
+			go func() {
+				selfdiagnosis.NetworkDiagnosis(l.Cli)
+			}()
 		case "shutdown":
 			time.Sleep(time.Second * 3)
 			os.Exit(1)

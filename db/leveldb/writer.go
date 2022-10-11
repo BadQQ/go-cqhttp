@@ -2,7 +2,6 @@ package leveldb
 
 import (
 	"bytes"
-	"io"
 
 	"github.com/Mrs4s/go-cqhttp/global"
 )
@@ -24,12 +23,25 @@ func (w *intWriter) uvarint(x uint64) {
 }
 
 // writer implements the index write.
+//
 // data format(use uvarint to encode integers):
-// | version | string data length | index data length | string data | index data |
+//
+//   - version
+//   - string data length
+//   - index data length
+//   - string data
+//   - index data
+//
 // for string data part, each string is encoded as:
-// | string length | string |
-// for index data part, each value is encoded as:
-// | coder | value |
+//
+//   - string length
+//   - string
+//
+// for index data part, each object value is encoded as:
+//
+//   - coder
+//   - value
+//
 // * coder is the identifier of value's type.
 // * specially for string, it's value is the offset in string data part.
 type writer struct {
@@ -125,7 +137,7 @@ func (w *writer) bytes() []byte {
 	out.uvarint(dataVersion)
 	out.uvarint(uint64(w.strings.Len()))
 	out.uvarint(uint64(w.data.Len()))
-	_, _ = io.Copy(&out, &w.strings)
-	_, _ = io.Copy(&out, &w.data)
+	_, _ = w.strings.WriteTo(&out)
+	_, _ = w.data.WriteTo(&out)
 	return out.Bytes()
 }

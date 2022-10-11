@@ -63,39 +63,24 @@ func PasswordHashDecrypt(encryptedPasswordHash string, key []byte) ([]byte, erro
 
 func newClient() *client.QQClient {
 	c := client.NewClientEmpty()
+	c.UseFragmentMessage = base.ForceFragmented
 	c.OnServerUpdated(func(bot *client.QQClient, e *client.ServerUpdatedEvent) bool {
 		if !base.UseSSOAddress {
-			log.Infof("收到服务器地址更新通知, 根据配置文件已忽略")
+			log.Infof("收到服务器地址更新通知, 根据配置文件已忽略.")
 			return false
 		}
-		log.Infof("收到服务器地址更新通知, 将在下一次重连时应用")
+		log.Infof("收到服务器地址更新通知, 将在下一次重连时应用. ")
 		return true
 	})
 	if global.PathExists("address.txt") {
-		log.Infof("检测到 address.txt 文件. 将覆盖目标IP")
+		log.Infof("检测到 address.txt 文件. 将覆盖目标IP.")
 		addr := global.ReadAddrFile("address.txt")
 		if len(addr) > 0 {
 			c.SetCustomServer(addr)
 		}
-		log.Infof("读取到 %v 个自定义地址", len(addr))
+		log.Infof("读取到 %v 个自定义地址.", len(addr))
 	}
-	c.OnLog(func(c *client.QQClient, e *client.LogEvent) {
-		switch e.Type {
-		case "INFO":
-			log.Info("Protocol -> " + e.Message)
-		case "ERROR":
-			log.Error("Protocol -> " + e.Message)
-		case "DEBUG":
-			log.Debug("Protocol -> " + e.Message)
-		case "DUMP":
-			if !global.PathExists(global.DumpsPath) {
-				_ = os.MkdirAll(global.DumpsPath, 0o755)
-			}
-			dumpFile := path.Join(global.DumpsPath, fmt.Sprintf("%v.dump", time.Now().Unix()))
-			log.Errorf("出现错误 %v. 详细信息已转储至文件 %v 请连同日志提交给开发者处理", e.Message, dumpFile)
-			_ = os.WriteFile(dumpFile, e.Dump, 0o644)
-		}
-	})
+	c.SetLogger(protocolLogger{})
 	return c
 }
 
@@ -147,4 +132,34 @@ func (l *Dologin) initLog() {
 	if err != nil {
 		log.Errorf("leveldb err:%v", err)
 	}
+}
+
+type protocolLogger struct{}
+
+const fromProtocol = "Protocol -> "
+
+func (p protocolLogger) Info(format string, arg ...any) {
+	log.Infof(fromProtocol+format, arg...)
+}
+
+func (p protocolLogger) Warning(format string, arg ...any) {
+	log.Warnf(fromProtocol+format, arg...)
+}
+
+func (p protocolLogger) Debug(format string, arg ...any) {
+	log.Debugf(fromProtocol+format, arg...)
+}
+
+func (p protocolLogger) Error(format string, arg ...any) {
+	log.Errorf(fromProtocol+format, arg...)
+}
+
+func (p protocolLogger) Dump(data []byte, format string, arg ...any) {
+	if !global.PathExists(global.DumpsPath) {
+		_ = os.MkdirAll(global.DumpsPath, 0o755)
+	}
+	dumpFile := path.Join(global.DumpsPath, fmt.Sprintf("%v.dump", time.Now().Unix()))
+	message := fmt.Sprintf(format, arg...)
+	log.Errorf("出现错误 %v. 详细信息已转储至文件 %v 请连同日志提交给开发者处理", message, dumpFile)
+	_ = os.WriteFile(dumpFile, data, 0o644)
 }

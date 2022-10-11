@@ -7,7 +7,7 @@
 #  && go env -w GO111MODULE=auto \
 #  && go env -w CGO_ENABLED=1 \
 #  && go env -w GOPROXY=https://goproxy.cn,direct
-FROM golang:1.17-bullseye AS builder
+FROM golang:1.18-bullseye AS builder
 COPY ./sources.list /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install -fy  build-essential clang git \

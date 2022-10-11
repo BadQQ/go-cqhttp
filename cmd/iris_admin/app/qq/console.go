@@ -12,7 +12,6 @@ import (
 
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/utils/common"
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/utils/jump"
-	"github.com/Mrs4s/go-cqhttp/coolq"
 )
 
 // DeleteFriend 删除好友
@@ -168,7 +167,7 @@ func (l *Dologin) sendGroupMsg(groupID int64, msg string) (int32, error) {
 		log.Warn("群消息发送失败: 信息为空.")
 		return 0, errors.New("EMPTY_MSG_ERROR")
 	}
-	elem = l.Bot.ConvertStringMessage(msg, coolq.MessageSourceGroup)
+	elem = l.Bot.ConvertStringMessage(msg, message.SourceGroup)
 
 	fixAt(elem)
 	mid := l.Bot.SendGroupMessage(groupID, &message.SendingMessage{Elements: elem})
@@ -180,7 +179,7 @@ func (l *Dologin) sendGroupMsg(groupID int64, msg string) (int32, error) {
 }
 
 func (l *Dologin) sendPrivateMsg(uin int64, msg string) (int32, error) {
-	elem := l.Bot.ConvertStringMessage(msg, coolq.MessageSourcePrivate)
+	elem := l.Bot.ConvertStringMessage(msg, message.SourcePrivate)
 	mid := l.Bot.SendPrivateMessage(uin, 0, &message.SendingMessage{Elements: elem})
 	if mid == -1 {
 		return mid, errors.New("SEND_MSG_API_ERROR")
@@ -220,7 +219,7 @@ func (l *Dologin) sendGuildChannelMsg(guildID, channelID uint64, msg string) (st
 		log.Warn("频道发送失败: 信息为空")
 		return "", errors.New("EMPTY_MSG_ERROR")
 	}
-	elem = l.Bot.ConvertStringMessage(msg, coolq.MessageSourceGuildChannel)
+	elem = l.Bot.ConvertStringMessage(msg, message.SourceGuildChannel)
 	fixAt(elem)
 	mid := l.Bot.SendGuildChannelMessage(guildID, channelID, &message.SendingMessage{Elements: elem})
 	if mid == "" {

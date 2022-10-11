@@ -1,15 +1,16 @@
 module github.com/Mrs4s/go-cqhttp
 
-go 1.17
+go 1.18
 
 require (
 	github.com/GoAdminGroup/go-admin v1.2.23
 	github.com/GoAdminGroup/themes v0.0.43
 	github.com/Microsoft/go-winio v0.5.1
-	github.com/Mrs4s/MiraiGo v0.0.0-20220218065747-0578942d86ab
+	github.com/Mrs4s/MiraiGo v0.0.0-20220621083050-ae8c187aa59d
+	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c
 	github.com/RomiChan/websocket v1.4.3-0.20220123145318-307a86b127bc
+	github.com/fumiama/go-base16384 v1.5.2
 	github.com/fumiama/go-hide-param v0.1.4
-	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
@@ -18,7 +19,7 @@ require (
 	github.com/scjtqs2/bot_adapter v0.0.0-20220210020910-bf58d224f932
 	github.com/segmentio/asm v1.1.3
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	github.com/tidwall/gjson v1.14.0
 	github.com/wdvxdr1123/go-silk v0.0.0-20210316130616-d47b553def60
@@ -26,7 +27,7 @@ require (
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -36,7 +37,7 @@ require (
 	github.com/CloudyKit/jet/v3 v3.0.0 // indirect
 	github.com/GoAdminGroup/html v0.0.1 // indirect
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e // indirect
-	github.com/RomiChan/protobuf v0.0.0-20220213164748-44b69c8bdec0 // indirect
+	github.com/RomiChan/protobuf v0.1.1-0.20220602121309-9e3b8cbefd7a // indirect
 	github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
@@ -107,7 +108,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220208230804-65c12eb4c068 // indirect
 	google.golang.org/grpc v1.44.0 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.3 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -118,4 +119,4 @@ require (
 	xorm.io/xorm v1.0.2 // indirect
 )
 
-replace github.com/mattn/go-sqlite3 => github.com/mattn/go-sqlite3 v1.14.11-0.20220110143033-671e666c2e88
+replace github.com/mattn/go-sqlite3 => github.com/mattn/go-sqlite3 v1.14.15
