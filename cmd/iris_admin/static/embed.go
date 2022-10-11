@@ -6,5 +6,6 @@ import (
 )
 
 // StaticFs 静态资源打包
+//
 //go:embed html db js qqface
 var StaticFs embed.FS

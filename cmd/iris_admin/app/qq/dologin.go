@@ -4,11 +4,12 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"fmt"
-	"github.com/Mrs4s/go-cqhttp/internal/selfdiagnosis"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Mrs4s/go-cqhttp/internal/selfdiagnosis"
 
 	"github.com/Mrs4s/go-cqhttp/cmd/iris_admin/app/adapter"
 

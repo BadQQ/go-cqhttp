@@ -1,9 +1,11 @@
+// Package main 程序的主体部分
 package main
 
 import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"              // web framework adapter
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite" // sql driver
 	_ "github.com/GoAdminGroup/themes/adminlte"                    // ui theme
+
 	"github.com/Mrs4s/go-cqhttp/internal/base"
 
 	"github.com/Mrs4s/go-cqhttp/cmd/gocq"

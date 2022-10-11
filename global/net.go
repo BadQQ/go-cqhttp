@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -52,7 +51,7 @@ func GetBytes(url string) ([]byte, error) {
 	defer func() {
 		_ = reader.Close()
 	}()
-	return ioutil.ReadAll(reader)
+	return io.ReadAll(reader)
 }
 
 // DownloadFile 将给定URL对应的文件下载至给定Path

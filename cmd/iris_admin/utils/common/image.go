@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -57,7 +56,7 @@ func GetImageWithCache(data global.MSG) template.HTML {
 			}
 		}
 		msg["file"] = local
-		img, _ := ioutil.ReadFile(local)
+		img, _ := os.ReadFile(local)
 		return returnImageSuccess(img)
 	}
 	return returnImagefaild(url)
