@@ -8,6 +8,12 @@
 
 ### ps: 配置信息里面，记得自行修改token。以及管理admin的密码。
 
+### 登录小提示：
++ 如果遇到了登录困难的问题，或者一直报账号被冻结，实际上账号并没有被冻结。执行下述操作：
++ 1、删掉现有的device.json。
++ 2、用 mrs4s的的原版cqhttp来命令行登录一下，生成新的`device.json`。复制`device.json`过来。`session.token`可复制可不复制。
++ 3、重新用魔改版的cqhttp来登录。
+
 ## 使用说明
 
 + docker-compose方式
