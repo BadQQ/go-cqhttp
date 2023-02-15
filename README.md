@@ -68,3 +68,9 @@
 > |BOT_ADAPTER_GRPC_ADDR | "bot-adapter:8001" | bot-adapter的grpc监听地址|
 >
 > http的token的话，需要在web面板中修改
+
++ 1.0.4
+> 日常同步更新
+
++ 1.0.5
+> 日常同步更新
