@@ -1,13 +1,9 @@
-#FROM golang:1.17-alpine AS builder
-#RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+#FROM golang:1.19-alpine AS builder
 #
-#RUN apk add --no-cache clang binutils clang-static musl-dev \
-#  && go env -w CC=clang \
-#  && go env -w CXX=clang++ \
-#  && go env -w GO111MODULE=auto \
-#  && go env -w CGO_ENABLED=1 \
+#RUN go env -w GO111MODULE=auto \
+#  && go env -w CGO_ENABLED=0 \
 #  && go env -w GOPROXY=https://goproxy.cn,direct
-FROM golang:1.18-bullseye AS builder
+FROM golang:1.19-bullseye AS builder
 COPY ./sources.list /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install -fy  build-essential clang git \
@@ -29,7 +25,18 @@ RUN set -ex \
 
 FROM alpine:latest
 RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-RUN apk add --no-cache ffmpeg
+RUN apk add --no-cache --update \
+      ffmpeg \
+      coreutils \
+      shadow \
+      su-exec && \
+    rm -rf /var/cache/apk/* && \
+    mkdir -p /app && \
+    mkdir -p /data && \
+    mkdir -p /config && \
+    useradd -d /config -s /bin/sh abc && \
+    chown -R abc /config && \
+    chown -R abc /data
 COPY ./init.sh /
 COPY --from=builder /build/cqhttp /usr/bin/cqhttp
 RUN chmod +x /usr/bin/cqhttp && chmod +x /init.sh
@@ -45,5 +52,6 @@ ENV BOT_ADAPTER_GRPC_ADDR "bot-adapter:8001"
 
 
 WORKDIR /data
+VOLUME [ "/data" ]
 
 ENTRYPOINT [ "/init.sh" ]

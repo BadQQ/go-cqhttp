@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"github.com/Mrs4s/go-cqhttp/internal/download"
 	"html/template"
 	"os"
 	"path"
@@ -45,10 +46,10 @@ func GetImageWithCache(data global.MSG) template.HTML {
 		}
 		local := path.Join(global.CachePath, file+path.Ext(msg["filename"].(string)))
 		if !global.PathExists(local) {
-			if body, err := global.HTTPGetReadCloser(msg["url"].(string)); err == nil {
+			d, err := download.Request{URL: msg["url"].(string)}.Bytes()
+			if err == nil {
 				f, _ := os.OpenFile(local, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o0644)
-				_, _ = f.ReadFrom(body)
-				_ = body.Close()
+				_, _ = f.Write(d)
 				_ = f.Close()
 			} else {
 				log.Warnf("下载图片 %v 时出现错误: %v", msg["url"], err)

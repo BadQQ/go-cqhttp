@@ -170,8 +170,8 @@ func (l *Dologin) sendGroupMsg(groupID int64, msg string) (int32, error) {
 	elem = l.Bot.ConvertStringMessage(msg, message.SourceGroup)
 
 	fixAt(elem)
-	mid := l.Bot.SendGroupMessage(groupID, &message.SendingMessage{Elements: elem})
-	if mid == -1 {
+	mid, err := l.Bot.SendGroupMessage(groupID, &message.SendingMessage{Elements: elem})
+	if err != nil || mid == -1 {
 		return mid, errors.New("SEND_MSG_API_ERROR")
 	}
 	log.Infof("发送群 %v(%v) 的消息: %v (%v)", group.Name, groupID, common.LimitedString(msg), mid)

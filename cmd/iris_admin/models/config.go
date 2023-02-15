@@ -155,6 +155,7 @@ func paraseConfig(configs []QQConfig) (*config2.Config, error) {
 			RemoveReplyAt       bool   `yaml:"remove-reply-at"`
 			ExtraReplyData      bool   `yaml:"extra-reply-data"`
 			SkipMimeScan        bool   `yaml:"skip-mime-scan"`
+			ConvertWebpImage    bool   `yaml:"convert-webp-image"`
 		}{
 			PostFormat:          cfgs.MessagePostFormat,
 			ProxyRewrite:        cfgs.MessageProxyRewrite,
